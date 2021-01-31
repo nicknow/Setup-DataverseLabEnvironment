@@ -1,17 +1,21 @@
-# SetupAIAD
+# Configure-DataverseLabEnvironment
 Please review the document [Creating Office 365 PowerApps Trial Environments.docx](/Creating%20Office%20365%20PowerApps%20Trial%20Environments.docx) if you require a Power Apps environment.
 
-PowerShell scripts that will automate setting up one or more CDS users and Power Apps environments. The script will:
-* Create one or more user accounts with randomly generated names
-* Create a new Power Apps environment for each new user
-* Create a new CDS data base for each environment 
-* Grant the new user rights to create apps within the new environment
+>__** ⚠ WARNING ⚠ **__ This script is intended for lab-like environments only. It will delete existing users, groups, Power Apps Environments/Dataverse Databases without warning. 
 
-The script will check for the correct licenses for the assigned user before proceeding. A Power Apps P2 license is required.
+PowerShell scripts that will automate setting up one or more CDS users and Power Apps environments. The script will:
+* Create one or more user accounts with UserXX usernames
+* Assign licenses to the user accounts
+* Create a new Power Apps environment for each new user
+* Create a new CDS data base for each environment
+* Optionally install the Sample Apps package
+* Optionally create a security group for each environment and add the environment's user to the group
 
 Before running this script, you will need to login to the [https://make.powerapps.com](https://make.powerapps.com) site at least once.
 
-This script is based on those provided with the Microsoft [App In A Day](https://aka.ms/AIADEvent) trainer package.  Adjustments have been made for parameterizing your credentials and capturing error conditions.
+When setting up the database it does polling (based on the MaxRetryCount and SleepTime parameters) so that we don't flood the service with 20 requests in a matter of seconds. If the MaxRetryCount is hit before provisioning is completed it will report as an error but if it showed LinkedDatabaseProvisioning as status there is unlikely to be an issue. You will just need to wait for it to complete provisioning before a user can access it. This can be seen in the [Power Platform Administration Center](https://admin.powerplatform.microsoft.com/) or by running [`Get-AdminPowerAppEnvironment`](https://docs.microsoft.com/en-us/powershell/module/microsoft.powerapps.administration.powershell/get-adminpowerappenvironment).
+
+This script was  forked from [Jim Novak's script](https://github.com/jamesnovak/SetupAIAD) which is based on those provided with the Microsoft [App In A Day](https://aka.ms/AIADEvent) trainer package.
 
 ## PARAMETERS
 
@@ -58,5 +62,14 @@ The time to sleep between retries when an error occurs. Default: `5`
 * `ForceUpdateModule`
 Flag indicating whether to force an update of the required PS modules.  Default: `false`
 
+* `useSecurityGroup`
+Flag indicating if each environment should have a security group generated and assigned. The user for the environment will be automatically added to the security group.
+
+* `installSampleApps`
+Flag indicating if the Power Apps Sample Apps should be installed with the database.
+
 ## EXAMPLE USAGE
-`C:\PS> .\SetupAIAD.ps1 -TargetTenant 'demotenant' -UserName 'admin' -Password 'password' -TenantRegion 'US' -CDSLocation unitedstates -NewUserPassword 'password' -UserCount 20 -MaxRetryCount 3 -SleepTime 5` 
+>__** ⚠ WARNING ⚠ **__ This script is intended for lab-like environments only. It will delete existing users, groups, Power Apps Environments/Dataverse Databases without warning. 
+
+`.\Setup-DataverseLabEnvironment.ps1 -TargetTenant 'mytenant' -UserName 'admin' -Password 'Admin Password' -TenantRegion 'US' -CDSLocation unitedstates -NewUserPassword 'password' -UserCount 2 -useSecurityGroup $true -installSampleApps $true
+`
