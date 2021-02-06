@@ -55,6 +55,9 @@
     .PARAMETER installSampleApps
     Flag indicating if the Power Apps Sample Apps should be installed with the database. Default: false
 
+    .PARAMETER skipDeleteWarning
+    Flag indiciating if the script should prompt for confirmation before starting delete process. Default: false
+
     .INPUTS
     None. You cannot pipe objects to Setup-DataverseLabEnvironment.ps1.
 
@@ -99,7 +102,10 @@ param (
     [bool]$useSecurityGroup = $false,
 
     [Parameter(Mandatory=$false, HelpMessage="Flag indicates whether to install the Sample Apps for each environment.")]
-    [bool]$installSampleApps = $false
+    [bool]$installSampleApps = $false,
+
+    [Parameter(Mandatory=$false, HelpMessage="Flag indicates whether to skip deletion warning and prompt.")]
+    [bool] $skipDeleteWarning = $false
  )
 
 # ***************** ***************** 
@@ -484,6 +490,13 @@ Add-PowerAppsAccount -Username $UserCredential.UserName -Password $UserCredentia
 
 Write-Host "********** Existing CDS environments **************"
 Get-AdminPowerAppEnvironment | Sort-Object displayname  | fl displayname
+
+if ($skipDeleteWarning){
+    Write-Warning "All existing users, groups, environments, and databases (other than the current user and Default environment). Will be deleted." -WarningAction Inquire
+}
+else {
+    Write-Host "Delete Warning Skipped."
+}
 
 
 # BE AWARE THAT THIS WILL DELETE ALL ENVIRONMENTS EXCEPT DEFAULT

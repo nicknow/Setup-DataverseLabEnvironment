@@ -1,7 +1,7 @@
 # Configure-DataverseLabEnvironment
 Please review the document [Creating Office 365 PowerApps Trial Environments.docx](/Creating%20Office%20365%20PowerApps%20Trial%20Environments.docx) if you require a Power Apps environment.
 
->__** ⚠ WARNING ⚠ **__ This script is intended for lab-like environments only. It will delete existing users, groups, Power Apps Environments/Dataverse Databases without warning. 
+>__** ⚠ WARNING ⚠ **__ This script is intended for lab-like environments only. It will delete existing users, groups, Power Apps Environments/Dataverse Databases. 
 
 PowerShell scripts that will automate setting up one or more CDS users and Power Apps environments. The script will:
 * Create one or more user accounts with UserXX usernames
@@ -63,13 +63,18 @@ The time to sleep between retries when an error occurs. Default: `5`
 Flag indicating whether to force an update of the required PS modules.  Default: `false`
 
 * `useSecurityGroup`
-Flag indicating if each environment should have a security group generated and assigned. The user for the environment will be automatically added to the security group.
+Flag indicating if each environment should have a security group generated and assigned. The user for the environment will be automatically added to the security group. Default: `false`
 
 * `installSampleApps`
-Flag indicating if the Power Apps Sample Apps should be installed with the database.
+Flag indicating if the Power Apps Sample Apps should be installed with the database. Default: `false`
+
+* `skipDeleteWarning`
+Flag indiciating if the script should prompt for confirmation before starting delete process. Default: `false`
+
+*
 
 ## EXAMPLE USAGE
->__** ⚠ WARNING ⚠ **__ This script is intended for lab-like environments only. It will delete existing users, groups, Power Apps Environments/Dataverse Databases without warning. 
+>__** ⚠ WARNING ⚠ **__ This script is intended for lab-like environments only. It will delete existing users, groups, Power Apps Environments/Dataverse Databases. 
 
 `.\Setup-DataverseLabEnvironment.ps1 -TargetTenant 'mytenant' -UserName 'admin' -Password 'Admin Password' -TenantRegion 'US' -CDSLocation unitedstates -NewUserPassword 'password' -UserCount 2 -useSecurityGroup $true -installSampleApps $true
 `
